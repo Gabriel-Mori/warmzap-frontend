@@ -1,3 +1,4 @@
+import { UserProvider } from "@/context/userContext";
 import { Mulish } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "./globals.css";
@@ -20,9 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${mulish.className}  antialiased`}>
+      <body className={`${mulish.className} antialiased`}>
         <ToastContainer autoClose={2000} />
-        {children}
+
+        <div className="flex h-full flex-col overflow-hidden">
+          <UserProvider>{children}</UserProvider>
+        </div>
       </body>
     </html>
   );

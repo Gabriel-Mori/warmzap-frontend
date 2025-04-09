@@ -41,7 +41,7 @@ const Register = () => {
   const onSubmit = async (customerData: RegisterProps) => {
     try {
       const response = await http.post(
-        "/register",
+        "/auth/register",
         {
           name: customerData.name,
           email: customerData.email,
@@ -139,10 +139,10 @@ const Register = () => {
         </form>
       </div>
 
-      <div className="bg-[#FCF5EA] relative h-full w-full flex flex-col justify-center items-center text-center p-4">
+      <div className="bg-[#CBCBCB] relative h-full w-full flex flex-col justify-center items-center text-center p-4">
         <div>
           <Image
-            src="/logo.png"
+            src="/sembg.png"
             height={400}
             width={400}
             alt="Faça login"

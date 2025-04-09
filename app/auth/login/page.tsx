@@ -3,11 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import http from "@/http";
+import { useUser } from "@/context/userContext";
+import { AuthService } from "@/services/authService";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LogIn } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
@@ -18,6 +20,9 @@ interface LoginProps {
 }
 
 const Login = () => {
+  const router = useRouter();
+  const { putUserData } = useUser();
+
   const schema = Yup.object().shape({
     email: Yup.string()
       .email("Digite um e-mail válido")
@@ -36,25 +41,23 @@ const Login = () => {
   });
 
   const onSubmit = async (customerData: LoginProps) => {
+    if (!customerData.email || !customerData.password) {
+      toast.error("E-mail e senha são obrigatórios.");
+      return;
+    }
+
     try {
-      const response = await http.post(
-        "/login",
+      const userData = await toast.promise(
+        AuthService.login(customerData.email, customerData.password),
         {
-          email: customerData.email,
-          password: customerData.password,
-        },
-        { validateStatus: () => true }
+          pending: "Verificando dados",
+          success: "Seja bem-vindo(a)",
+          error: "Verifique seu e-email e senha",
+        }
       );
-      console.log("response: ", response);
-      if (response?.data?.user?.id) {
-        const token = response?.data?.token;
-        localStorage.setItem("token", token);
-        toast.success("Login realizado com sucesso");
-      } else if (response.status === 40) {
-        toast.error("Credenciais inválidas");
-      } else {
-        throw new Error("");
-      }
+
+      putUserData(userData);
+      router.push("/dashboard");
     } catch (err) {
       toast.error("Falha ao cadastrar! Tente novamente");
     }
@@ -123,7 +126,7 @@ const Login = () => {
       <div className="bg-[#FCF5EA] relative h-full w-full flex flex-col justify-center items-center text-center p-4">
         <div>
           <Image
-            src="/logo.png"
+            src="/sembg.png"
             height={400}
             width={400}
             alt="Faça login"

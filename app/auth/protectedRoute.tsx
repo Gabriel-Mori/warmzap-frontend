@@ -14,11 +14,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/auth/login");
-      setIsAuthenticated(false);
-    } else {
+    if (token) {
+      router.push("/dashboard");
       setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
     }
   }, [router]);
 
@@ -27,10 +27,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
       <div className="flex justify-center items-center h-screen">
         <Loader size={50} color="#007bff" />
       </div>
-    ); // Indicador de carregamento enquanto verifica
+    );
   }
 
-  if (isAuthenticated) {
+  if (!isAuthenticated) {
     return <>{children}</>;
   }
 
